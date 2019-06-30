@@ -1,0 +1,35 @@
+{
+  "name": "ease-task-typescript",
+  "version": "1.0.0",
+  "description": "TypeScript compiler plugin for Ease task runner",
+  "main": "task.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/chisel/ease-task-typescript.git"
+  },
+  "keywords": [
+    "ease",
+    "task",
+    "runner",
+    "typescript",
+    "ts",
+    "tsc",
+    "compiler",
+    "plugin"
+  ],
+  "author": "Ramtin Soltani <ramtin@chiselpowered.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/chisel/ease-task-typescript/issues"
+  },
+  "homepage": "https://github.com/chisel/ease-task-typescript#readme",
+  "dependencies": {
+    "fs-extra": "^8.1.0",
+    "glob": "^7.1.4",
+    "lodash": "^4.17.11",
+    "typescript": "^3.5.2"
+  }
+}
