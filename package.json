@@ -1,6 +1,6 @@
 {
   "name": "ease-task-typescript",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "TypeScript compiler plugin for Ease task runner",
   "main": "task.js",
   "scripts": {
