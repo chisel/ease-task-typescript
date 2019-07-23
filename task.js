@@ -14,6 +14,7 @@ module.exports = (logger, dirname, config) => {
       if ( (! config.outDir || ! config.rootDir) && ! config.tsconfig ) return reject(new Error('TypeScript plugin misconfiguration! Either outDir and rootDir or tsconfig must be present.'));
 
       let finalOptions = _.cloneDeep(config);
+      let tsConfigExclude;
 
       delete finalOptions.cleanOutDir;
 
@@ -25,6 +26,8 @@ module.exports = (logger, dirname, config) => {
           let tsconfig = fs.readJsonSync(path.resolve(dirname, config.tsconfig));
 
           finalOptions = tsconfig.compilerOptions;
+          tsConfigExclude = (tsconfig.exclude || []).map(filename => path.resolve(dirname, path.dirname(config.tsconfig), filename));
+          tsConfigExclude = tsConfigExclude.map(filename => fs.lstatSync(filename).isDirectory() ? path.join(filename, '**', '*.ts') : filename);
 
         }
         catch (error) {
@@ -54,7 +57,9 @@ module.exports = (logger, dirname, config) => {
       }
 
       // Search `config.rootDir` for `.ts` files
-      glob('**/*.ts', { cwd: path.resolve(dirname, finalOptions.rootDir) }, (error, files) => {
+      glob(path.resolve(dirname, finalOptions.rootDir, '**/*.ts'), {
+        ignore: tsConfigExclude
+      }, (error, files) => {
 
         if ( error ) return reject(error);
 
