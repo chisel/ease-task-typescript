@@ -22,23 +22,27 @@ module.exports = (logger, dirname, config) => {
 
         try {
 
-          let tsconfig = fs.readJsonSync(path.join(dirname, config.tsconfig));
+          let tsconfig = fs.readJsonSync(path.resolve(dirname, config.tsconfig));
 
           finalOptions = tsconfig.compilerOptions;
 
         }
         catch (error) {
 
-          return reject(new Error(`Could not load "${path.join(dirname, config.tsconfig)}"!`));
+          return reject(new Error(`Could not load "${path.resolve(dirname, config.tsconfig)}"!`));
 
         }
 
       }
 
+      // Resolve ourDir and rootDir
+      finalOptions.outDir = path.join(path.dirname(config.tsconfig), finalOptions.outDir);
+      finalOptions.rootDir = path.join(path.dirname(config.tsconfig), finalOptions.rootDir);
+
       // Empty outDir if necessary
       if ( config.cleanOutDir ) {
 
-        fs.emptyDirSync(path.join(dirname, finalOptions.outDir));
+        fs.emptyDirSync(path.resolve(dirname, finalOptions.outDir));
 
       }
 
@@ -50,14 +54,14 @@ module.exports = (logger, dirname, config) => {
       }
 
       // Search `config.rootDir` for `.ts` files
-      glob('**/*.ts', { cwd: path.join(dirname, finalOptions.rootDir) }, (error, files) => {
+      glob('**/*.ts', { cwd: path.resolve(dirname, finalOptions.rootDir) }, (error, files) => {
 
         if ( error ) return reject(error);
 
         logger(`Transpiling ${files.length} files...`);
 
         // Create program
-        const program = ts.createProgram(files.map(file => path.join(dirname, finalOptions.rootDir, file)), finalOptions);
+        const program = ts.createProgram(files.map(file => path.resolve(dirname, finalOptions.rootDir, file)), finalOptions);
         let emitResult = program.emit();
         let diagnostics = ts.getPreEmitDiagnostics(program).concat(emitResult.diagnostics);
 
