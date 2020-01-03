@@ -27,12 +27,28 @@ module.exports = (logger, dirname, config) => {
 
           finalOptions = tsconfig.compilerOptions;
           tsConfigExclude = (tsconfig.exclude || []).map(filename => path.resolve(dirname, path.dirname(config.tsconfig), filename));
-          tsConfigExclude = tsConfigExclude.map(filename => fs.lstatSync(filename).isDirectory() ? path.join(filename, '**', '*.ts') : filename);
+          tsConfigExclude = tsConfigExclude.map(filename => {
+
+            try {
+
+              let stat = fs.lstatSync(filename);
+
+              return stat.isDirectory() ? path.join(filename, '**', '*.ts') : filename;
+
+            }
+            catch (error) {
+
+              return null;
+
+            }
+
+          })
+          .filter(filename => filename !== null);
 
         }
         catch (error) {
 
-          return reject(new Error(`Could not load "${path.resolve(dirname, config.tsconfig)}"!`));
+          return reject(new Error(`Could not load "${path.resolve(dirname, config.tsconfig)}"!\n${error}`));
 
         }
 
