@@ -1,4 +1,4 @@
-const ts = require('typescript');
+let ts = require('typescript');
 const fs = require('fs-extra');
 const path = require('path');
 const _ = require('lodash');
@@ -9,6 +9,26 @@ module.exports = (logger, dirname, config) => {
   return () => {
 
     return new Promise((resolve, reject) => {
+
+      // Load local TypeScript
+      if ( config.useLocal ) {
+
+        try {
+
+          ts = require(path.join(dirname, 'node_modules', 'typescript'));
+
+          if ( ! ts ) throw new Error();
+
+          logger('Using local TypeScript...');
+
+        }
+        catch (error) {
+
+          logger('Could not find local TypeScript! Using the shipped version instead...');
+
+        }
+
+      }
 
       // Validate config
       if ( (! config.outDir || ! config.rootDir) && ! config.tsconfig ) return reject(new Error('TypeScript plugin misconfiguration! Either outDir and rootDir or tsconfig must be present.'));
